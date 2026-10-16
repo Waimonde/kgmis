@@ -1,8 +1,7 @@
-# KeMU Games Management Information System (KGMIS)
+# Games Management Information System (KGMIS)
 
-A classroom full-stack web application project for managing university
-sports activities at Kenya Methodist University (KeMU). The project is
-developed collaboratively by student groups as one integrated system.
+A classroom full-stack web application project for managing the university
+sports activities. The project is developed collaboratively by student groups as one integrated system.
 
 ## Technology Stack
 
@@ -20,7 +19,7 @@ kgmis/
     ├── server.js
     ├── package.json
     ├── package-lock.json
-    ├── .env         # Create locally; never commit this file
+    ├── .env    
     └── .gitignore
 ```
 
