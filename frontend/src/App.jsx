@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import "./index.css";
 import Players from "./pages/Players";
+import Administration from "./pages/Administration";
 
 function Placeholder({ title }) {
   return (
@@ -28,7 +29,7 @@ function AppLayout() {
           <Route path="/teams" element={<Placeholder title="Teams & Coaches" />} />
           <Route path="/fixtures" element={<Placeholder title="Fixtures & Results" />} />
           <Route path="/events" element={<Placeholder title="Events & Attendance" />} />
-          <Route path="/administration" element={<Placeholder title="Administration" />} />
+          <Route path="/administration" element={<Administration />} />
         </Routes>
       </main>
     </div>

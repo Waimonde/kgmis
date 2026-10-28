@@ -1,0 +1,124 @@
+
+.admin-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px;
+  color: #172033;
+}
+
+.admin-page h1 {
+  margin: 0 0 10px;
+  font-size: 2rem;
+}
+
+.admin-page .eyebrow {
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.admin-page .muted {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 28px 0;
+}
+
+.admin-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+.admin-card h3 {
+  margin: 0 0 12px;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.admin-card p {
+  margin: 0;
+  color: #0f766e;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.admin-section {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 24px;
+  margin: 20px 0;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+.admin-section h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  color: #172033;
+}
+
+.admin-page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 18px;
+}
+
+.admin-page th,
+.admin-page td {
+  padding: 14px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-page th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.85rem;
+}
+
+.admin-page ul {
+  padding-left: 22px;
+  line-height: 1.9;
+  color: #475569;
+}
+
+@media (max-width: 640px) {
+  .admin-page {
+    padding: 16px;
+  }
+
+  .admin-section {
+    padding: 16px;
+  }
+
+  .admin-page table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+.user-search {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 14px;
+  margin: 12px 0 20px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.user-search:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
