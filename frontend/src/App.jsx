@@ -2,8 +2,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
-import "./index.css";
 import Players from "./pages/Players";
+import Students from "./pages/Students";
+import "./index.css";
+
 
 function Placeholder({ title }) {
   return (
@@ -25,6 +27,7 @@ function AppLayout() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/players" element={<Players />} />
+          <Route path="/students" element={<Students />} />
           <Route path="/teams" element={<Placeholder title="Teams & Coaches" />} />
           <Route path="/fixtures" element={<Placeholder title="Fixtures & Results" />} />
           <Route path="/events" element={<Placeholder title="Events & Attendance" />} />
