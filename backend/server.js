@@ -18,12 +18,14 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
 });
 
+// HOME
 app.get("/", (req, res) => {
   res.json({
     message: "KeMU Games Management API is running",
   });
 });
 
+// DATABASE HEALTH CHECK
 app.get("/api/health", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW() AS server_time");
@@ -43,8 +45,7 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
-
-/* GET all players */
+// GET ALL PLAYERS
 app.get("/api/players", async (req, res) => {
   try {
     const result = await pool.query(
@@ -58,7 +59,7 @@ app.get("/api/players", async (req, res) => {
   }
 });
 
-/* REGISTER a player */
+// REGISTER A PLAYER
 app.post("/api/players", async (req, res) => {
   try {
     const {
@@ -69,7 +70,7 @@ app.post("/api/players", async (req, res) => {
       faculty,
       sport,
       position,
-      status
+      status,
     } = req.body;
 
     if (
@@ -81,7 +82,7 @@ app.post("/api/players", async (req, res) => {
       !position
     ) {
       return res.status(400).json({
-        error: "Please provide all required player details"
+        error: "Please provide all required player details",
       });
     }
 
@@ -99,7 +100,7 @@ app.post("/api/players", async (req, res) => {
         faculty,
         sport,
         position,
-        status || "Active"
+        status || "Active",
       ]
     );
 
@@ -107,7 +108,7 @@ app.post("/api/players", async (req, res) => {
   } catch (error) {
     if (error.code === "23505") {
       return res.status(409).json({
-        error: "This registration number already exists"
+        error: "This registration number already exists",
       });
     }
 
@@ -116,6 +117,106 @@ app.post("/api/players", async (req, res) => {
   }
 });
 
+// UPDATE A PLAYER
+app.put("/api/players/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const {
+      registration_number,
+      full_name,
+      gender,
+      phone,
+      faculty,
+      sport,
+      position,
+      status,
+    } = req.body;
+
+    if (
+      !registration_number ||
+      !full_name ||
+      !gender ||
+      !faculty ||
+      !sport ||
+      !position
+    ) {
+      return res.status(400).json({
+        error: "Please provide all required player details",
+      });
+    }
+
+    const result = await pool.query(
+      `UPDATE players
+       SET registration_number = $1,
+           full_name = $2,
+           gender = $3,
+           phone = $4,
+           faculty = $5,
+           sport = $6,
+           position = $7,
+           status = $8
+       WHERE id = $9
+       RETURNING *`,
+      [
+        registration_number,
+        full_name,
+        gender,
+        phone || null,
+        faculty,
+        sport,
+        position,
+        status || "Active",
+        id,
+      ]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({
+        error: "Player not found",
+      });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    if (error.code === "23505") {
+      return res.status(409).json({
+        error: "This registration number already exists",
+      });
+    }
+
+    console.error("Error updating player:", error.message);
+    res.status(500).json({ error: "Failed to update player" });
+  }
+});
+
+// DELETE A PLAYER
+app.delete("/api/players/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      "DELETE FROM players WHERE id = $1 RETURNING *",
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({
+        error: "Player not found",
+      });
+    }
+
+    res.json({
+      message: "Player deleted successfully",
+      player: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Error deleting player:", error.message);
+    res.status(500).json({ error: "Failed to delete player" });
+  }
+});
+
+// START SERVER
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
