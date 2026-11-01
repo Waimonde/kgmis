@@ -1419,3 +1419,174 @@ button {
     flex-direction: column;
   }
 }
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  margin-top: auto;
+  border-top: 1px solid #e5e7eb;
+}
+
+.sidebar-user-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-user-info strong {
+  font-size: 13px;
+}
+
+.sidebar-user-info small {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.logout-button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  color: inherit;
+}
+
+.logout-button:hover {
+  background: #e5e7eb;
+}
+
+/* LOGIN PAGE */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #f1f5f9;
+}
+
+.login-card {
+  background: white;
+  width: 100%;
+  max-width: 430px;
+  padding: 35px;
+  border-radius: 14px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+}
+
+.login-brand {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-logo {
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  background: #17365d;
+  color: white;
+  border-radius: 12px;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.login-brand h1 {
+  font-size: 23px;
+  margin: 0;
+  color: #17365d;
+}
+
+.login-brand p,
+.login-heading p {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.login-heading {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #17365d;
+}
+
+.login-heading h2 {
+  margin: 10px 0 5px;
+}
+
+.login-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-card label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.login-card input:focus {
+  border-color: #2563eb;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 45px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.login-button {
+  margin-top: 12px;
+  padding: 13px;
+  background: #17365d;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background: #24517f;
+}
+
+.login-error {
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.login-footer {
+  margin-top: 25px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #94a3b8;
+}

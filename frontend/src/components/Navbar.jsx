@@ -1,5 +1,5 @@
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -10,7 +10,9 @@ import {
   Settings,
   ChartNoAxesCombined,
   UserCog,
-  GraduationCap
+  GraduationCap,
+  LogOut,
+  UserCircle
 } from "lucide-react";
 
 const menuGroups = [
@@ -36,18 +38,36 @@ const menuGroups = [
 ];
 
 export default function Navbar() {
+  const navigate = useNavigate();
+
+  // Retrieve the logged-in user's details from localStorage
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+
+  // Handle logout
+  function handleLogout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    navigate("/login", { replace: true });
+  }
+
   return (
     <aside className="sidebar">
+
+      {/* SYSTEM BRANDING */}
       <div className="brand">
         <div className="brand-logo">K</div>
+
         <div>
           <h2>KGMIS Games</h2>
           <span>Management System</span>
         </div>
       </div>
 
+      {/* NAVIGATION MENU */}
       {menuGroups.map((group) => (
         <div className="nav-group" key={group.title}>
+
           <div className="nav-section-title">
             {group.title}
           </div>
@@ -67,13 +87,43 @@ export default function Navbar() {
               </NavLink>
             ))}
           </nav>
+
         </div>
       ))}
 
+      {/* SIDEBAR FOOTER */}
       <div className="sidebar-footer">
         <ClipboardList size={18} />
         <span>KGMIS Sports Department</span>
       </div>
+
+      {/* LOGGED-IN USER DETAILS */}
+      <div className="sidebar-user">
+
+        <UserCircle size={30} />
+
+        <div className="sidebar-user-info">
+          <strong>
+            {user?.name || "KGMIS User"}
+          </strong>
+
+          <small>
+            {user?.role || "User"}
+          </small>
+        </div>
+
+        {/* LOGOUT BUTTON */}
+        <button
+          className="logout-button"
+          onClick={handleLogout}
+          title="Logout"
+          type="button"
+        >
+          <LogOut size={18} />
+        </button>
+
+      </div>
+
     </aside>
   );
 }
