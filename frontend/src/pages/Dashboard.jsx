@@ -136,7 +136,7 @@ export default function Dashboard() {
       <section className="welcome-banner">
         <div className="welcome-content">
           <span className="welcome-label">
-            KEMU SPORTS DEPARTMENT
+            KGMIS
           </span>
 
           <h2>
@@ -308,9 +308,9 @@ export default function Dashboard() {
         </div>
 
         <div>
-          <strong>KGMIS Games Management Information System</strong>
+          <strong>KGMIS (Games Management Information System)</strong>
           <p>
-            Centralized management of university sports,
+            Centralized management of sports,
             players, teams, fixtures and events.
           </p>
         </div>

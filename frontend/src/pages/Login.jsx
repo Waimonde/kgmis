@@ -124,7 +124,7 @@ export default function Login() {
         </form>
 
         <div className="login-footer">
-          Kenya Methodist University
+          KGMIS
           <br />
           Games Department
         </div>
