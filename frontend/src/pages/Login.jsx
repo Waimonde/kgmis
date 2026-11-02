@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, LockKeyhole } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -38,13 +38,10 @@ export default function Login() {
         throw new Error(data.error || "Login failed.");
       }
 
-      // Save the real JWT token and user details
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // Redirect to the dashboard
       navigate("/");
-      
     } catch (err) {
       console.error("Login error:", err);
 
@@ -64,18 +61,11 @@ export default function Login() {
 
         <div className="login-brand">
           <div className="login-logo">K</div>
-          <h1>KGMIS Games</h1>
-          <p>Management Information System</p>
-        </div>
-
-        <div className="login-heading">
-          <LockKeyhole size={30} />
-          <h2>Welcome Back</h2>
-          <p>Sign in to access the KGMIS dashboard.</p>
+          <h1>KGMIS</h1>
+          <p>Games Management Information System</p>
         </div>
 
         <form onSubmit={handleLogin}>
-
           <label>Email Address</label>
           <input
             type="email"
@@ -120,13 +110,19 @@ export default function Login() {
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>
-
         </form>
 
+        <div className="login-description">
+          <h3>About KGMIS</h3>
+          <p>
+            A centralised sports management platform for organisations,
+            institutions and clubs. Manage athletes, teams, fixtures,
+            events and performance reports, all in one place.
+          </p>
+        </div>
+
         <div className="login-footer">
-          KGMIS
-          <br />
-          Games Department
+          KGMIS | Sports Management Platform
         </div>
 
       </div>
