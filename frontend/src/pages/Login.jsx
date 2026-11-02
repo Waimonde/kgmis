@@ -61,8 +61,11 @@ export default function Login() {
 
         <div className="login-brand">
           <div className="login-logo">K</div>
-          <h1>KGMIS</h1>
-          <p>Games Management Information System</p>
+
+          <div className="login-brand-text">
+            <h1>KGMIS</h1>
+            <p>Games Management Information System</p>
+          </div>
         </div>
 
         <form onSubmit={handleLogin}>
@@ -92,9 +95,9 @@ export default function Login() {
               className="password-toggle"
             >
               {showPassword ? (
-                <EyeOff size={19} />
+                <EyeOff size={17} />
               ) : (
-                <Eye size={19} />
+                <Eye size={17} />
               )}
             </button>
           </div>
@@ -122,7 +125,10 @@ export default function Login() {
         </div>
 
         <div className="login-footer">
-          KGMIS | Sports Management Platform
+          <span>KGMIS | Sports Management Platform. </span>
+          <span className="login-credit">
+            Designed by <strong>Ole Waimonde</strong>
+          </span>
         </div>
 
       </div>
