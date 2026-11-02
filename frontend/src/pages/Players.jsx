@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import {
   Search,
@@ -80,6 +79,7 @@ const positions = {
   Other: ["Player"],
 };
 
+// Convert database records into frontend player objects
 function fromApi(row) {
   return {
     id: row.id,
@@ -95,6 +95,29 @@ function fromApi(row) {
 }
 
 export default function Players() {
+  // AUTHENTICATION
+  const token = localStorage.getItem("token");
+
+  let currentUser = null;
+
+  try {
+    currentUser = JSON.parse(
+      localStorage.getItem("user") || "null"
+    );
+  } catch (error) {
+    currentUser = null;
+  }
+
+  // ROLE PERMISSIONS
+  const canManagePlayers = [
+    "Administrator",
+    "Games Department",
+  ].includes(currentUser?.role);
+
+  const canDeletePlayers =
+    currentUser?.role === "Administrator";
+
+  // STATE
   const [players, setPlayers] = useState([]);
   const [form, setForm] = useState(emptyForm);
 
@@ -116,18 +139,26 @@ export default function Players() {
     setLoading(true);
 
     try {
-      const response = await fetch(API_URL);
-
-      if (!response.ok) {
-        throw new Error("Could not load player records.");
-      }
+      const response = await fetch(API_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || "Could not load player records."
+        );
+      }
 
       setPlayers(data.map(fromApi));
       setError("");
     } catch (err) {
-      setError(`${err.message} Check that the backend is running.`);
+      setError(
+        `${err.message} Check that the backend is running.`
+      );
     } finally {
       setLoading(false);
     }
@@ -148,10 +179,12 @@ export default function Players() {
         player.sport.toLowerCase().includes(term);
 
       const matchesSport =
-        sportFilter === "All" || player.sport === sportFilter;
+        sportFilter === "All" ||
+        player.sport === sportFilter;
 
       const matchesStatus =
-        statusFilter === "All" || player.status === statusFilter;
+        statusFilter === "All" ||
+        player.status === statusFilter;
 
       return matchesSearch && matchesSport && matchesStatus;
     });
@@ -170,6 +203,8 @@ export default function Players() {
 
   // OPEN REGISTRATION FORM
   function openNewForm() {
+    if (!canManagePlayers) return;
+
     setForm(emptyForm);
     setEditingId(null);
     setError("");
@@ -178,6 +213,8 @@ export default function Players() {
 
   // OPEN EDIT FORM
   function openEditForm(player) {
+    if (!canManagePlayers) return;
+
     setForm({
       regNo: player.regNo,
       name: player.name,
@@ -211,6 +248,8 @@ export default function Players() {
   async function handleSubmit(event) {
     event.preventDefault();
 
+    if (!canManagePlayers) return;
+
     setError("");
     setSaving(true);
 
@@ -229,11 +268,14 @@ export default function Players() {
       const isEditing = editingId !== null;
 
       const response = await fetch(
-        isEditing ? `${API_URL}/${editingId}` : API_URL,
+        isEditing
+          ? `${API_URL}/${editingId}`
+          : API_URL,
         {
           method: isEditing ? "PUT" : "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(payload),
         }
@@ -266,6 +308,7 @@ export default function Players() {
       setForm(emptyForm);
       setEditingId(null);
       setError("");
+
     } catch (err) {
       setError(
         err.message || "Could not connect to the server."
@@ -277,6 +320,8 @@ export default function Players() {
 
   // DELETE PLAYER
   async function handleDelete(player) {
+    if (!canDeletePlayers) return;
+
     const confirmed = window.confirm(
       `Are you sure you want to delete ${player.name} (${player.regNo})? This action cannot be undone.`
     );
@@ -291,6 +336,9 @@ export default function Players() {
         `${API_URL}/${player.id}`,
         {
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -311,6 +359,7 @@ export default function Players() {
       if (selectedPlayer?.id === player.id) {
         setSelectedPlayer(null);
       }
+
     } catch (err) {
       setError(
         err.message || "Could not connect to the server."
@@ -335,19 +384,23 @@ export default function Players() {
       <div className="page-heading">
         <div>
           <p className="eyebrow">SPORTS DEPARTMENT</p>
+
           <h1>Player Management</h1>
+
           <p className="muted">
             Register students and manage sports player records.
           </p>
         </div>
 
-        <button
-          className="primary-btn"
-          onClick={openNewForm}
-        >
-          <Plus size={18} />
-          Register Player
-        </button>
+        {canManagePlayers && (
+          <button
+            className="primary-btn"
+            onClick={openNewForm}
+          >
+            <Plus size={18} />
+            Register Player
+          </button>
+        )}
       </div>
 
       {/* PLAYER STATISTICS */}
@@ -357,6 +410,7 @@ export default function Players() {
           <div className="player-stat-icon blue">
             <Users size={22} />
           </div>
+
           <div>
             <p>Total Players</p>
             <h2>{players.length}</h2>
@@ -367,6 +421,7 @@ export default function Players() {
           <div className="player-stat-icon green">
             <CheckCircle2 size={22} />
           </div>
+
           <div>
             <p>Active Players</p>
             <h2>{activeCount}</h2>
@@ -377,6 +432,7 @@ export default function Players() {
           <div className="player-stat-icon orange">
             <Clock3 size={22} />
           </div>
+
           <div>
             <p>Inactive Players</p>
             <h2>{inactiveCount}</h2>
@@ -387,6 +443,7 @@ export default function Players() {
           <div className="player-stat-icon purple">
             <UserRound size={22} />
           </div>
+
           <div>
             <p>Sports Represented</p>
             <h2>{sportsCount}</h2>
@@ -401,6 +458,7 @@ export default function Players() {
         <div className="players-panel-heading">
           <div>
             <h3>Registered Players</h3>
+
             <p>
               {filteredPlayers.length} player record(s) displayed
             </p>
@@ -509,6 +567,7 @@ export default function Players() {
 
                         <div>
                           <strong>{player.name}</strong>
+
                           <span>
                             {player.gender} · {player.phone || "No phone"}
                           </span>
@@ -520,6 +579,7 @@ export default function Players() {
 
                     <td>
                       <strong>{player.sport}</strong>
+
                       <span className="table-subtext">
                         {player.position}
                       </span>
@@ -540,6 +600,7 @@ export default function Players() {
                     </td>
 
                     <td>
+                      {/* VIEW PLAYER */}
                       <button
                         className="icon-btn"
                         title={`View ${player.name}`}
@@ -551,28 +612,34 @@ export default function Players() {
                         <Eye size={17} />
                       </button>
 
-                      <button
-                        className="icon-btn"
-                        title={`Edit ${player.name}`}
-                        aria-label={`Edit ${player.name}`}
-                        onClick={() =>
-                          openEditForm(player)
-                        }
-                      >
-                        <Pencil size={17} />
-                      </button>
+                      {/* EDIT PLAYER */}
+                      {canManagePlayers && (
+                        <button
+                          className="icon-btn"
+                          title={`Edit ${player.name}`}
+                          aria-label={`Edit ${player.name}`}
+                          onClick={() =>
+                            openEditForm(player)
+                          }
+                        >
+                          <Pencil size={17} />
+                        </button>
+                      )}
 
-                      <button
-                        className="icon-btn delete-btn"
-                        title={`Delete ${player.name}`}
-                        aria-label={`Delete ${player.name}`}
-                        onClick={() =>
-                          handleDelete(player)
-                        }
-                        disabled={deletingId === player.id}
-                      >
-                        <Trash2 size={17} />
-                      </button>
+                      {/* DELETE PLAYER */}
+                      {canDeletePlayers && (
+                        <button
+                          className="icon-btn delete-btn"
+                          title={`Delete ${player.name}`}
+                          aria-label={`Delete ${player.name}`}
+                          onClick={() =>
+                            handleDelete(player)
+                          }
+                          disabled={deletingId === player.id}
+                        >
+                          <Trash2 size={17} />
+                        </button>
+                      )}
                     </td>
 
                   </tr>
@@ -595,6 +662,7 @@ export default function Players() {
           <span>
             Showing {filteredPlayers.length} of {players.length} records
           </span>
+
           <span>KeMU Games Management</span>
         </div>
 
@@ -647,6 +715,7 @@ export default function Players() {
 
                 <label>
                   Student Registration Number *
+
                   <input
                     name="regNo"
                     value={form.regNo}
@@ -659,6 +728,7 @@ export default function Players() {
 
                 <label>
                   Full Name *
+
                   <input
                     name="name"
                     value={form.name}
@@ -671,6 +741,7 @@ export default function Players() {
 
                 <label>
                   Gender *
+
                   <select
                     name="gender"
                     value={form.gender}
@@ -687,6 +758,7 @@ export default function Players() {
 
                 <label>
                   Phone Number
+
                   <input
                     type="tel"
                     name="phone"
@@ -699,6 +771,7 @@ export default function Players() {
 
                 <label>
                   Faculty / School *
+
                   <input
                     name="faculty"
                     value={form.faculty}
@@ -711,6 +784,7 @@ export default function Players() {
 
                 <label>
                   Sport *
+
                   <select
                     name="sport"
                     value={form.sport}
@@ -727,6 +801,7 @@ export default function Players() {
 
                 <label>
                   Playing Position *
+
                   <select
                     name="position"
                     value={form.position}
@@ -748,6 +823,7 @@ export default function Players() {
 
                 <label>
                   Player Status *
+
                   <select
                     name="status"
                     value={form.status}
@@ -814,9 +890,11 @@ export default function Players() {
             <div className="player-modal-header">
               <div>
                 <p className="eyebrow">PLAYER PROFILE</p>
+
                 <h2 id="player-profile-title">
                   {selectedPlayer.name}
                 </h2>
+
                 <p className="muted">
                   {selectedPlayer.regNo}
                 </p>
@@ -876,6 +954,7 @@ export default function Players() {
             </div>
 
             <div className="player-form-actions">
+
               <button
                 className="secondary-btn"
                 onClick={() => setSelectedPlayer(null)}
@@ -883,16 +962,19 @@ export default function Players() {
                 Close
               </button>
 
-              <button
-                className="primary-btn"
-                onClick={() => {
-                  openEditForm(selectedPlayer);
-                  setSelectedPlayer(null);
-                }}
-              >
-                <Pencil size={16} />
-                Edit Player
-              </button>
+              {canManagePlayers && (
+                <button
+                  className="primary-btn"
+                  onClick={() => {
+                    openEditForm(selectedPlayer);
+                    setSelectedPlayer(null);
+                  }}
+                >
+                  <Pencil size={16} />
+                  Edit Player
+                </button>
+              )}
+
             </div>
 
           </section>

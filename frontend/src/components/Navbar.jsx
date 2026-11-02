@@ -30,9 +30,24 @@ const menuGroups = [
   {
     title: "ADMINISTRATION",
     links: [
-      { to: "/administration", label: "Administration", icon: UserCog },
-      { to: "/users", label: "User Management", icon: GraduationCap },
-      { to: "/settings", label: "System Settings", icon: Settings },
+      {
+        to: "/administration",
+        label: "Administration",
+        icon: UserCog,
+        allowedRoles: ["Administrator", "Games Department"]
+      },
+      {
+        to: "/users",
+        label: "User Management",
+        icon: GraduationCap,
+        allowedRoles: ["Administrator"]
+      },
+      {
+        to: "/settings",
+        label: "System Settings",
+        icon: Settings,
+        allowedRoles: ["Administrator"]
+      },
     ],
   },
 ];
@@ -40,8 +55,30 @@ const menuGroups = [
 export default function Navbar() {
   const navigate = useNavigate();
 
-  // Retrieve the logged-in user's details from localStorage
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  // Retrieve the logged-in user's details
+  let user = null;
+
+  try {
+    user = JSON.parse(localStorage.getItem("user") || "null");
+  } catch (error) {
+    user = null;
+  }
+
+  const userRole = user?.role;
+
+  // Filter navigation links according to user role
+  const visibleMenuGroups = menuGroups
+    .map((group) => ({
+      ...group,
+      links: group.links.filter((link) => {
+        // Links without role restrictions are available to all users
+        if (!link.allowedRoles) return true;
+
+        return link.allowedRoles.includes(userRole);
+      }),
+    }))
+    // Hide menu groups with no visible links
+    .filter((group) => group.links.length > 0);
 
   // Handle logout
   function handleLogout() {
@@ -64,8 +101,8 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* NAVIGATION MENU */}
-      {menuGroups.map((group) => (
+      {/* ROLE-BASED NAVIGATION MENU */}
+      {visibleMenuGroups.map((group) => (
         <div className="nav-group" key={group.title}>
 
           <div className="nav-section-title">

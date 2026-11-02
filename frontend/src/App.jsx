@@ -11,14 +11,38 @@ import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Players from "./pages/Players";
 import Login from "./pages/Login";
+import Users from "./pages/Users";
 
 import "./index.css";
 
-// Protect pages that require authentication
+// Check whether the user is logged in
 function ProtectedRoute() {
   const token = localStorage.getItem("token");
 
   return token ? <Outlet /> : <Navigate to="/login" replace />;
+}
+
+// Check whether the logged-in user has the required role
+function RoleProtectedRoute({ allowedRoles }) {
+  const token = localStorage.getItem("token");
+
+  let user = null;
+
+  try {
+    user = JSON.parse(localStorage.getItem("user") || "null");
+  } catch (error) {
+    user = null;
+  }
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!user || !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <Outlet />;
 }
 
 // Main application layout
@@ -34,12 +58,14 @@ function AppLayout() {
   );
 }
 
-// Temporary placeholder for modules under development
+// Placeholder for modules still under development
 function Placeholder({ title }) {
   return (
     <div className="page-placeholder">
       <p className="eyebrow">KEMU GAMES MANAGEMENT</p>
+
       <h1>{title}</h1>
+
       <p className="muted">
         This module will be developed next.
       </p>
@@ -52,10 +78,10 @@ export default function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* Public route */}
+        {/* PUBLIC ROUTE */}
         <Route path="/login" element={<Login />} />
 
-        {/* Protected routes */}
+        {/* ALL AUTHENTICATED USERS */}
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
 
@@ -83,26 +109,47 @@ export default function App() {
               element={<Placeholder title="Performance & Reports" />}
             />
 
+            {/* ADMINISTRATOR AND GAMES DEPARTMENT */}
             <Route
-              path="/administration"
-              element={<Placeholder title="Administration" />}
-            />
+              element={
+                <RoleProtectedRoute
+                  allowedRoles={[
+                    "Administrator",
+                    "Games Department"
+                  ]}
+                />
+              }
+            >
+              <Route
+                path="/administration"
+                element={<Placeholder title="Administration" />}
+              />
+            </Route>
 
+            {/* ADMINISTRATOR ONLY */}
             <Route
-              path="/users"
-              element={<Placeholder title="User Management" />}
-            />
+              element={
+                <RoleProtectedRoute
+                  allowedRoles={["Administrator"]}
+                />
+              }
+            >
+              <Route path="/users" element={<Users />} />
 
-            <Route
-              path="/settings"
-              element={<Placeholder title="System Settings" />}
-            />
+              <Route
+                path="/settings"
+                element={<Placeholder title="System Settings" />}
+              />
+            </Route>
 
           </Route>
         </Route>
 
-        {/* Unknown routes */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* UNKNOWN ROUTES */}
+        <Route
+          path="*"
+          element={<Navigate to="/" replace />}
+        />
 
       </Routes>
     </BrowserRouter>
