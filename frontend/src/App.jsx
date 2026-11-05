@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Players from "./pages/Players";
 import Login from "./pages/Login";
 import Users from "./pages/Users";
+import Events from "./pages/Events";
 
 import "./index.css";
 
@@ -101,7 +102,7 @@ export default function App() {
 
             <Route
               path="/events"
-              element={<Placeholder title="Events & Attendance" />}
+              element={<Events />}
             />
 
             <Route
